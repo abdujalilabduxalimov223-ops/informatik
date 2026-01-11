@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>10–11 sinflar | Informatika va AT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="logo">Informatika va AT</div>
+  <nav class="nav">
+    <a href="../index.html">Bosh sahifa</a>
+    <a href="kichik.html">1–4</a>
+    <a href="orta.html">5–9</a>
+    <a href="katta.html" class="active">10–11</a>
+  </nav>
+</header>
+
+<!-- ===== PAGE TITLE ===== -->
+<section class="page-title">
+  <h1>10–11 sinflar uchun darslar</h1>
+  <p>Dasturlash, web texnologiyalar va ma’lumotlar bazalari</p>
+</section>
+
+<!-- ===== CONTENT ===== -->
+<section class="edu-section">
+
+  <!-- ===== QO‘LLANMALAR ===== -->
+  <div class="edu-block">
+    <h2>📘 Qo‘llanmalar</h2>
+    <p>Yuqori sinflar uchun chuqurlashtirilgan materiallar</p>
+
+    <div class="edu-cards" id="materialsContainer">
+      <p>Yuklanmoqda...</p>
+    </div>
+  </div>
+
+  <!-- ===== VIDEO QO‘LLANMALAR ===== -->
+  <div class="edu-block">
+    <h2>🎥 Video darslar</h2>
+    <p>Amaliy va loyihaviy yondashuv asosidagi darslar</p>
+
+    <div class="edu-cards" id="videosContainer">
+      <p>Yuklanmoqda...</p>
+    </div>
+  </div>
+
+  <!-- ===== TESTLAR ===== -->
+  <div class="edu-block">
+  <h2>🧪 Testlar</h2>
+  <p>Bilim va ko‘nikmalarni baholash</p>
+
+  <div class="edu-cards">
+    <div class="edu-card">
+      <h3>10–11 sinflar testi</h3>
+      <a href="tests/kattatest.html" class="btn-primary">
+        Testni boshlash
+      </a>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-bottom">
+    <p>© 2026 Informatika va AT</p>
+  </div>
+</footer>
+
+<!-- ===== BACKEND ULANISH ===== -->
+<script>
+const API_URL = "https://for-c8pq.onrender.com/api/classes/katta";
+
+const materialsContainer = document.getElementById("materialsContainer");
+const videosContainer = document.getElementById("videosContainer");
+
+fetch(API_URL)
+  .then(res => res.json())
+  .then(data => {
+    renderMaterials(data.materials || []);
+    renderVideos(data.videos || []);
+  })
+  .catch(() => {
+    materialsContainer.innerHTML = "<p>Xatolik yuz berdi</p>";
+    videosContainer.innerHTML = "<p>Xatolik yuz berdi</p>";
+  });
+
+// ===== QO‘LLANMALAR =====
+function renderMaterials(materials) {
+  materialsContainer.innerHTML = "";
+
+  if (materials.length === 0) {
+    materialsContainer.innerHTML = "<p>Hozircha qo‘llanmalar yo‘q</p>";
+    return;
+  }
+
+  materials.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "edu-card";
+
+    card.innerHTML = `
+      <h3>${item.title}</h3>
+      <p>PDF fayl</p>
+      <a
+        href="https://for-c8pq.onrender.com/uploads/${item.file}"
+        download
+        class="btn-primary"
+      >
+        ⬇ Yuklab olish
+      </a>
+    `;
+
+    materialsContainer.appendChild(card);
+  });
+}
+
+// ===== VIDEOLAR =====
+function renderVideos(videos) {
+  videosContainer.innerHTML = "";
+
+  if (videos.length === 0) {
+    videosContainer.innerHTML = "<p>Hozircha videolar yo‘q</p>";
+    return;
+  }
+
+  videos.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "edu-card";
+
+    card.innerHTML = `
+      <h3>${item.title}</h3>
+      <a href="${item.url}" target="_blank" class="btn-secondary">
+        ▶ Tomosha qilish
+      </a>
+    `;
+
+    videosContainer.appendChild(card);
+  });
+}
+</script>
+
+</body>
+</html>

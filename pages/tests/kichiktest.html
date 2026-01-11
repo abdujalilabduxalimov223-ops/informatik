@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>1–4 sinflar testi | Informatika va AT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../css/style.css">
+
+  <style>
+    .test-timer {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 15px 0;
+      color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="logo">1–4 sinflar testi</div>
+  <nav class="nav">
+    <a href="../kichik.html">⬅ Ortga</a>
+  </nav>
+</header>
+
+<!-- ===== PAGE TITLE ===== -->
+<section class="page-title">
+  <h1>Bilimingizni tekshirib ko‘ring</h1>
+  <p>Har bir savolga bitta to‘g‘ri javobni belgilang</p>
+</section>
+
+<!-- ===== TIMER ===== -->
+<div class="test-timer">
+  ⏳ Qolgan vaqt: <span id="time">00:00</span>
+</div>
+
+<!-- ===== TEST CONTENT ===== -->
+<section class="edu-section" id="testContainer">
+  <p>Testlar yuklanmoqda...</p>
+</section>
+
+<!-- ===== ACTIONS ===== -->
+<div class="edu-section">
+  <button class="btn-primary test-check-btn" onclick="checkAnswers()">
+    ✔ Tekshirish
+  </button>
+
+  <div class="result-box" id="resultBox"></div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-bottom">
+    <p>© 2026 Informatika va AT</p>
+  </div>
+</footer>
+
+<!-- ===== SCRIPT ===== -->
+<script>
+const API_URL = "https://for-c8pq.onrender.com/api/tests/kichik";
+const container = document.getElementById("testContainer");
+const resultBox = document.getElementById("resultBox");
+
+let testsData = [];
+let totalSeconds = 0;
+let timerInterval = null;
+let finished = false;
+
+// ===== TESTLARNI OLISH =====
+fetch(API_URL)
+  .then(res => res.json())
+  .then(data => {
+    console.log("KICHIK TEST DATA:", data);
+    testsData = data;
+    renderTests(data);
+    startTimer(data.length); // 🔥 1 savol = 1 daqiqa
+  })
+  .catch(err => {
+    console.error(err);
+    container.innerHTML = "<p>Xatolik yuz berdi</p>";
+  });
+
+// ===== TESTLARNI CHIQARISH =====
+function renderTests(tests) {
+  container.innerHTML = "";
+
+  if (!Array.isArray(tests) || tests.length === 0) {
+    container.innerHTML = "<p>Hozircha testlar mavjud emas</p>";
+    return;
+  }
+
+  tests.forEach((test, index) => {
+    const box = document.createElement("div");
+    box.className = "test-box";
+
+    let html = `<h3>${index + 1}. ${test.question}</h3>`;
+
+    test.answers.forEach(answer => {
+      html += `
+        <label class="answer">
+          <input
+            type="radio"
+            name="q${index}"
+            value="${answer.correct}">
+          ${answer.text}
+        </label>
+      `;
+    });
+
+    box.innerHTML = html;
+    container.appendChild(box);
+  });
+}
+
+// ===== TIMER =====
+function startTimer(questionCount) {
+  totalSeconds = questionCount * 60;
+  updateTimer();
+
+  timerInterval = setInterval(() => {
+    totalSeconds--;
+    updateTimer();
+
+    if (totalSeconds <= 0) {
+      clearInterval(timerInterval);
+      alert("⏰ Vaqt tugadi! Natija chiqarilmoqda.");
+      checkAnswers();
+    }
+  }, 1000);
+}
+
+function updateTimer() {
+  const min = Math.floor(totalSeconds / 60);
+  const sec = totalSeconds % 60;
+
+  document.getElementById("time").textContent =
+    String(min).padStart(2, "0") + ":" +
+    String(sec).padStart(2, "0");
+}
+
+// ===== TEKSHIRISH =====
+function checkAnswers() {
+  if (finished) return;
+  finished = true;
+
+  clearInterval(timerInterval);
+
+  let correct = 0;
+  let total = testsData.length;
+
+  document.querySelectorAll(".test-box").forEach(box => {
+    const checked = box.querySelector("input:checked");
+
+    if (checked) {
+      if (checked.value === "true") {
+        checked.parentElement.classList.add("correct");
+        correct++;
+      } else {
+        checked.parentElement.classList.add("wrong");
+      }
+    }
+  });
+
+  const percent = total ? Math.round((correct / total) * 100) : 0;
+
+  resultBox.style.display = "block";
+  resultBox.innerHTML = `
+    <h2>Natija</h2>
+    <p>To‘g‘ri javoblar: <b>${correct}</b> / ${total}</p>
+    <p>Foiz: <b>${percent}%</b></p>
+  `;
+}
+</script>
+
+</body>
+</html>

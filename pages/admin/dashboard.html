@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin panel | Informatika va AT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<script>
+  // Agar login bo‘lmagan bo‘lsa — login sahifaga qaytaradi
+  if (!sessionStorage.getItem("dashboardAuth")) {
+    window.location.href = "../login.html";
+  }
+</script>
+
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="logo">Admin panel</div>
+  <nav class="nav">
+    <a href="../../index.html">Bosh sahifa</a>
+    <a href="../direktor.html">drektor</a>
+    
+  </nav>
+</header>
+
+<!-- ===== PAGE TITLE ===== -->
+<section class="page-title">
+  <h1>Ma’lumotlarni boshqarish</h1>
+  <p>Sinflar bo‘yicha qo‘llanmalar va videolarni kiritish</p>
+</section>
+
+<!-- ===== CONTENT ===== -->
+<section class="edu-section">
+
+  <!-- SINF TANLASH -->
+  <div class="edu-block">
+    <h2>🎓 Sinfni tanlang</h2>
+    <select class="input" id="classSelect">
+      <option value="">— Sinfni tanlang —</option>
+      <option value="kichik">1–4 sinflar</option>
+      <option value="orta">5–9 sinflar</option>
+      <option value="katta">10–11 sinflar</option>
+    </select>
+    <!-- ===== UMUMIY MA'LUMOTLAR ===== -->
+<div class="edu-block">
+  <h2>📂 Joriy sinf ma’lumotlari</h2>
+
+  <h3>📘 Qo‘llanmalar</h3>
+  <div class="edu-cards" id="materialsList"></div>
+
+  <h3>🎥 Videolar</h3>
+  <div class="edu-cards" id="videosList"></div>
+</div>
+
+  </div>
+
+  <!-- QO‘LLANMA QO‘SHISH -->
+  <div class="edu-block">
+    <h2>📘 Qo‘llanma qo‘shish</h2>
+
+    <input
+      type="text"
+      class="input"
+      id="materialTitle"
+      placeholder="Qo‘llanma nomi"
+    >
+
+    <input
+      type="file"
+      class="input"
+      id="materialFile"
+    >
+
+    <button
+      type="button"
+      class="btn-primary"
+      id="saveMaterial"
+    >
+      Saqlash
+    </button>
+  </div>
+
+  <!-- VIDEO QO‘SHISH -->
+  <div class="edu-block">
+    <h2>🎥 Video qo‘shish (YouTube)</h2>
+
+    <input
+      type="text"
+      class="input"
+      id="videoTitle"
+      placeholder="Video nomi"
+    >
+
+    <input
+      type="text"
+      class="input"
+      id="videoUrl"
+      placeholder="YouTube havolasi"
+    >
+
+    <button
+      type="button"
+      class="btn-secondary"
+      id="saveVideo"
+    >
+      Saqlash
+    </button>
+  </div>
+
+  <!-- TEST -->
+  <div class="edu-block">
+    <h2>🧪 Test qo‘shish</h2>
+    <p>Testlarni alohida sahifada yaratish va tahrirlash</p>
+
+    <a href="../test.html" class="btn-primary">
+      ➕ Test qo‘shish
+    </a>
+  </div>
+
+</section>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+const API = "https://for-c8pq.onrender.com/api/classes";
+
+const classSelect = document.getElementById("classSelect");
+const materialsList = document.getElementById("materialsList");
+const videosList = document.getElementById("videosList");
+
+classSelect.addEventListener("change", loadClassData);
+
+async function loadClassData() {
+  const type = classSelect.value;
+  if (!type) {
+    materialsList.innerHTML = "<p>Sinf tanlang</p>";
+    videosList.innerHTML = "";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/${type}`);
+    if (!res.ok) throw new Error("Server error");
+
+    const data = await res.json();
+
+    renderMaterials(data.materials || [], type);
+    renderVideos(data.videos || [], type);
+
+  } catch (err) {
+    console.error(err);
+    materialsList.innerHTML = "<p>Xatolik yuz berdi</p>";
+    videosList.innerHTML = "";
+  }
+}
+
+// ===== MATERIALS =====
+function renderMaterials(materials, type) {
+  materialsList.innerHTML = "";
+
+  if (!materials.length) {
+    materialsList.innerHTML = "<p>Qo‘llanmalar yo‘q</p>";
+    return;
+  }
+
+  materials.forEach((m, i) => {
+    materialsList.innerHTML += `
+      <div class="edu-card">
+        <h4>${m.title}</h4>
+        <a href="https://for-c8pq.onrender.com/uploads/${m.file}" download class="btn-primary">
+          ⬇ Yuklab olish
+        </a>
+        <button class="btn-danger" onclick="deleteMaterial('${type}', ${i})">
+          ❌ O‘chirish
+        </button>
+      </div>
+    `;
+  });
+}
+
+// ===== VIDEOS =====
+function renderVideos(videos, type) {
+  videosList.innerHTML = "";
+
+  if (!videos.length) {
+    videosList.innerHTML = "<p>Videolar yo‘q</p>";
+    return;
+  }
+
+  videos.forEach((v, i) => {
+    videosList.innerHTML += `
+      <div class="edu-card">
+        <h4>${v.title}</h4>
+        <a href="${v.url}" target="_blank" class="btn-secondary">
+          ▶ Tomosha qilish
+        </a>
+        <button class="btn-danger" onclick="deleteVideo('${type}', ${i})">
+          ❌ O‘chirish
+        </button>
+      </div>
+    `;
+  });
+}
+
+// ===== DELETE MATERIAL =====
+async function deleteMaterial(type, index) {
+  if (!confirm("Qo‘llanma o‘chirilsinmi?")) return;
+  await fetch(`${API}/${type}/material/${index}`, { method: "DELETE" });
+  loadClassData();
+}
+
+// ===== DELETE VIDEO =====
+async function deleteVideo(type, index) {
+  if (!confirm("Video o‘chirilsinmi?")) return;
+  await fetch(`${API}/${type}/video/${index}`, { method: "DELETE" });
+  loadClassData();
+}
+</script>
+
+<!-- ===================================================== -->
+<!-- O‘QITUVCHILAR UCHUN RESURSLARNI KIRITISH (DASHBOARD) -->
+<!-- ===================================================== -->
+
+<section style="
+  margin-top:40px;
+  background:#6f63c2;
+  padding:40px;
+  border-radius:20px;
+  color:#fff;
+">
+
+  <h1 style="
+    text-align:center;
+    font-size:32px;
+    font-weight:700;
+    letter-spacing:1px;
+    margin-bottom:10px;
+  ">
+    O‘QITUVCHILAR UCHUN RESURSLARNI KIRITISH
+  </h1>
+
+  <p style="text-align:center; opacity:.9; margin-bottom:30px;">
+    Fayllarni qo‘shish, o‘chirish va boshqarish
+  </p>
+
+  <!-- ===== FAYL YUKLASH FORMASI ===== -->
+  <form id="uploadForm"
+        enctype="multipart/form-data"
+        style="
+          background:#fff;
+          color:#333;
+          padding:25px;
+          border-radius:15px;
+          max-width:700px;
+          margin:0 auto;
+        ">
+
+    <select name="category" required
+      style="width:100%;padding:12px;margin-bottom:12px;">
+      <option value="">📂 Bo‘limni tanlang</option>
+      <option value="dars">📘 Dars ishlanmalari</option>
+      <option value="reja">📋 Yillik rejalar</option>
+      <option value="taqdimot">📊 Taqdimotlar</option>
+      <option value="metodik">📚 Metodik qo‘llanmalar</option>
+    </select>
+
+    <input type="text" name="title" required
+      placeholder="Fayl nomi"
+      style="width:100%;padding:12px;margin-bottom:12px;">
+
+    <input type="file" name="file" required
+      style="width:100%;padding:12px;margin-bottom:18px;">
+
+    <button type="submit" style="
+      width:100%;
+      padding:14px;
+      background:#6f63c2;
+      color:#fff;
+      border:none;
+      border-radius:10px;
+      font-size:16px;
+      cursor:pointer;
+    ">
+      ➕ FAYLNI YUKLASH
+    </button>
+  </form>
+
+  <!-- ===== SAQLANGAN FAYLLAR RO‘YXATI ===== -->
+  <div id="adminFileList" style="margin-top:30px;"></div>
+
+</section>
+
+<script>
+const API_URL = "https://for-c8pq.onrender.com/api/resources";
+
+const listBox = document.getElementById("adminFileList");
+const form = document.getElementById("uploadForm");
+
+async function loadFiles() {
+  const res = await fetch(API_URL);
+  const files = await res.json();
+
+  if (!files.length) {
+    listBox.innerHTML = "<p style='text-align:center;'>Hozircha fayllar yo‘q</p>";
+    return;
+  }
+
+  listBox.innerHTML = files.map(f => `
+    <div style="
+      background:#fff;
+      color:#333;
+      padding:15px;
+      border-radius:10px;
+      margin-bottom:12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    ">
+      <div>
+        <strong>${f.title}</strong><br>
+        <small>${getCategoryName(f.category)} • ${f.type} • ${f.size}</small>
+      </div>
+      <button onclick="deleteFile(${f.id})"
+        style="background:#ff5252;color:#fff;border:none;
+               padding:8px 12px;border-radius:8px;cursor:pointer;">
+        🗑
+      </button>
+    </div>
+  `).join("");
+}
+
+async function deleteFile(id) {
+  if (!confirm("Faylni o‘chirmoqchimisiz?")) return;
+  await fetch(API_URL + "/" + id, { method: "DELETE" });
+  loadFiles();
+}
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  await fetch(API_URL, {
+    method: "POST",
+    body: new FormData(form)
+  });
+  form.reset();
+  loadFiles();
+});
+
+function getCategoryName(c) {
+  return {
+    dars: "📘 Dars ishlanmalari",
+    reja: "📋 Yillik rejalar",
+    taqdimot: "📊 Taqdimotlar",
+    metodik: "📚 Metodik qo‘llanmalar"
+  }[c];
+}
+
+loadFiles();
+</script>
+<!-- ===================================================== -->
+<script>
+const saveMaterialBtn = document.getElementById("saveMaterial");
+const materialTitle = document.getElementById("materialTitle");
+const materialFile = document.getElementById("materialFile");
+
+saveMaterialBtn.addEventListener("click", async () => {
+  const type = classSelect.value;
+  if (!type) return alert("Sinfni tanlang");
+
+  if (!materialFile.files.length) {
+    return alert("Fayl tanlang");
+  }
+
+  try {
+    // 1️⃣ Faylni uploads ga yuklash
+    const formData = new FormData();
+    formData.append("file", materialFile.files[0]);
+
+    const uploadRes = await fetch("https://for-c8pq.onrender.com/api/upload", {
+      method: "POST",
+      body: formData
+    });
+
+    const uploaded = await uploadRes.json();
+
+    // 2️⃣ Joriy sinf maʼlumotini olish
+    const res = await fetch(`${API}/${type}`);
+    const data = await res.json();
+
+    // 3️⃣ Yangi qo‘llanmani qo‘shish
+    const newData = {
+      materials: [
+        ...(data.materials || []),
+        {
+          title: materialTitle.value,
+          file: uploaded.filename
+        }
+      ],
+      videos: data.videos || []
+    };
+
+    // 4️⃣ Saqlash
+    await fetch(`${API}/${type}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newData)
+    });
+
+    materialTitle.value = "";
+    materialFile.value = "";
+
+    loadClassData();
+    alert("Qo‘llanma saqlandi ✅");
+
+  } catch (e) {
+    console.error(e);
+    alert("Xatolik yuz berdi");
+  }
+});
+</script>
+<script>
+const saveVideoBtn = document.getElementById("saveVideo");
+const videoTitle = document.getElementById("videoTitle");
+const videoUrl = document.getElementById("videoUrl");
+
+saveVideoBtn.addEventListener("click", async () => {
+  const type = classSelect.value;
+  if (!type) return alert("Sinfni tanlang");
+
+  if (!videoTitle.value || !videoUrl.value) {
+    return alert("Video maʼlumotlarini kiriting");
+  }
+
+  try {
+    const res = await fetch(`${API}/${type}`);
+    const data = await res.json();
+
+    const newData = {
+      materials: data.materials || [],
+      videos: [
+        ...(data.videos || []),
+        {
+          title: videoTitle.value,
+          url: videoUrl.value
+        }
+      ]
+    };
+
+    await fetch(`${API}/${type}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newData)
+    });
+
+    videoTitle.value = "";
+    videoUrl.value = "";
+
+    loadClassData();
+    alert("Video saqlandi ✅");
+
+  } catch (e) {
+    console.error(e);
+    alert("Xatolik yuz berdi");
+  }
+});
+</script>
+
+
+
+
+</body>
+</html>

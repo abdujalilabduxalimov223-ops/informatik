@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>Testlarni boshqarish | Informatika va AT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="logo">Test admin panel</div>
+  <nav class="nav">
+    <a href="../index.html">Bosh sahifa</a>
+    <a href="admin/dashboard.html">Dashboard</a>
+  </nav>
+</header>
+
+<!-- ===== PAGE TITLE ===== -->
+<section class="page-title">
+  <h1>Testlarni boshqarish</h1>
+  <p>Yaratish • Tahrirlash • O‘chirish</p>
+</section>
+
+<section class="edu-section">
+
+  <!-- SINFLARNI TANLASH -->
+  <div class="edu-block">
+    <h2>🎓 Sinfni tanlang</h2>
+    <select class="input" id="classSelect">
+      <option value="">— Sinfni tanlang —</option>
+      <option value="kichik">1–4 sinflar</option>
+      <option value="orta">5–9 sinflar</option>
+      <option value="katta">10–11 sinflar</option>
+    </select>
+  </div>
+
+  <!-- TESTLAR RO‘YXATI -->
+  <div class="edu-block">
+    <h2>📋 Mavjud testlar</h2>
+    <div id="testsList">
+      <p>Sinf tanlang</p>
+    </div>
+  </div>
+
+  <!-- TEST QO‘SHISH / TAHRIRLASH -->
+  <div class="edu-block">
+    <h2>🧪 Test matni</h2>
+    <p>
+      <b>++++</b> — savol <br>
+      <b>====</b> — noto‘g‘ri variant <br>
+      <b>####</b> — to‘g‘ri variant
+    </p>
+
+    <textarea id="testText" class="input" rows="14"
+      placeholder="++++ Savol
+==== Variant
+#### To‘g‘ri variant"></textarea>
+
+    <button class="btn-primary" id="saveBtn">💾 Saqlash</button>
+  </div>
+
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-bottom">
+    <p>© 2026 Informatika va AT</p>
+  </div>
+</footer>
+
+<script>
+const API = "https://for-c8pq.onrender.com/api/tests";
+const classSelect = document.getElementById("classSelect");
+const testsList = document.getElementById("testsList");
+const testText = document.getElementById("testText");
+const saveBtn = document.getElementById("saveBtn");
+
+let currentTests = [];
+
+// ===== PARSER =====
+function parseTests(text) {
+  const blocks = text.split("++++").filter(b => b.trim());
+  return blocks.map(block => {
+    const lines = block.trim().split("\n").filter(Boolean);
+    return {
+      question: lines[0],
+      answers: lines.slice(1).map(l => ({
+        text: l.replace(/^(====|####)/, "").trim(),
+        correct: l.startsWith("####")
+      }))
+    };
+  });
+}
+
+// ===== SINFLAR O‘ZGARGANDA =====
+classSelect.addEventListener("change", loadTests);
+
+async function loadTests() {
+  const type = classSelect.value;
+  if (!type) return;
+
+  const res = await fetch(`${API}/${type}`);
+  currentTests = await res.json();
+
+  renderTests();
+}
+
+// ===== TESTLARNI CHIQARISH =====
+function renderTests() {
+  testsList.innerHTML = "";
+
+  if (currentTests.length === 0) {
+    testsList.innerHTML = "<p>Hozircha testlar yo‘q</p>";
+    return;
+  }
+
+  currentTests.forEach((t, i) => {
+    const div = document.createElement("div");
+    div.className = "edu-card";
+
+    div.innerHTML = `
+      <h3>${i + 1}. ${t.question}</h3>
+      <button class="btn-secondary" onclick="editTest(${i})">✏️ Tahrirlash</button>
+      <button class="btn-primary" onclick="deleteTest(${i})">❌ O‘chirish</button>
+    `;
+
+    testsList.appendChild(div);
+  });
+}
+
+// ===== TAHRIRLASH =====
+function editTest(index) {
+  const t = currentTests[index];
+
+  let text = "++++ " + t.question + "\n";
+  t.answers.forEach(a => {
+    text += (a.correct ? "#### " : "==== ") + a.text + "\n";
+  });
+
+  testText.value = text;
+  currentTests.splice(index, 1);
+}
+
+// ===== O‘CHIRISH =====
+async function deleteTest(index) {
+  if (!confirm("Test o‘chirilsinmi?")) return;
+
+  currentTests.splice(index, 1);
+  await saveAll();
+}
+ //==== test====
+saveBtn.addEventListener("click", async () => {
+  const classType = classSelect.value;
+  const text = testText.value.trim();
+
+  if (!classType) {
+    alert("Sinfni tanlang");
+    return;
+  }
+
+  if (!text) {
+    alert("Test matnini kiriting");
+    return;
+  }
+
+  await fetch("https://for-c8pq.onrender.com/api/tests", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      classType,
+      text
+    })
+  });
+
+  alert("Test saqlandi ✅");
+  testText.value = "";
+});
+
+</script>
+
+</body>
+</html>
