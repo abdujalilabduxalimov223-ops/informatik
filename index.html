@@ -295,44 +295,448 @@
 </section>
 
 
-  <!-- Call to Action -->
-  <section class="cta-section">
-    <div class="cta-container">
-      <h2>Qo'shimcha yordam kerakmi?</h2>
-      <p>Savollaringiz bo'lsa, biz bilan bog'laning.</p>
-      <a href="#" class="btn-primary">Aloqa sahifasi</a>
+
+<!-- Muallif Ma'lumotlari Section -->
+<section class="author-section">
+    <div class="grid-background"></div>
+    
+    <div class="author-container">
+        <div class="glow-line"></div>
+        <div class="corner-decoration top-left"></div>
+        <div class="corner-decoration bottom-right"></div>
+        <div class="particles"></div>
+        <div class="particles"></div>
+        <div class="particles"></div>
+        <div class="particles"></div>
+        <div class="particles"></div>
+        <div class="particles"></div>
+        
+        <h1 class="title">MUALLIF</h1>
+        <div class="subtitle">Ma'lumotlari</div>
+        
+        <div class="info-card">
+            <div class="info-item">
+                <span class="label">Ta'lim muassasasi</span>
+                <span class="value university-name">OSIYO XALQARO UNIVERSITETI</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Ta'lim yo'nalishi</span>
+                <span class="value">"Ta'limda axborot texnologiyalari" magistratura</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Ishlab chiquvchi</span>
+                <span class="value author-name">VAHOBOV ADXAM BAHODIROVICH</span>
+            </div>
+        </div>
+
+        <div class="footer-text">
+            © 2026 • BARCHA HUQUQLAR HIMOYALANGAN
+        </div>
     </div>
-  </section>
-  
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-col">
-        <h3>Informatika va AT</h3>
-        <p>
-          1–11 sinflar uchun informatika va axborot texnologiyalari
-          fanidan zamonaviy ta'lim platformasi.
-        </p>
-      </div>
+</section>
 
-      <div class="footer-col">
-        <h4>Bo'limlar</h4>
-        <ul>
-          <li><a href="#">Bosh sahifa</a></li>
-          <li><a href="pages/classes.html">Sinflar</a></li>
-          <li><a href="pages/teachers.html">O'qituvchilar</a></li>
-          <li><a href="pages/resources.html">Resurslar</a></li>
-        </ul>
-      </div>
+<style>
+    /* Author Section Styles */
+    .author-section {
+        background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #dbeafe 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 80px 20px;
+        position: relative;
+        overflow: hidden;
+    }
 
-      <div class="footer-col">
-        <h4>Aloqa</h4>
-        <p>Email: info@informatika.uz</p>
-        <p>Telegram: @informatika_at</p>
-      </div>
-    </div>
+    .author-section::before {
+        content: '';
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(96, 165, 250, 0.2) 0%, transparent 70%);
+        border-radius: 50%;
+        top: -250px;
+        right: -200px;
+        animation: float 15s ease-in-out infinite;
+    }
 
-      </footer>
+    .author-section::after {
+        content: '';
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+        border-radius: 50%;
+        bottom: -200px;
+        left: -150px;
+        animation: float 20s ease-in-out infinite 5s;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+        }
+        50% {
+            transform: translate(30px, -30px) scale(1.1);
+        }
+    }
+
+    .grid-background {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+        background-size: 50px 50px;
+        animation: gridMove 20s linear infinite;
+    }
+
+    @keyframes gridMove {
+        0% {
+            transform: translate(0, 0);
+        }
+        100% {
+            transform: translate(50px, 50px);
+        }
+    }
+
+    .author-container {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 32px;
+        padding: 80px 70px;
+        max-width: 950px;
+        width: 100%;
+        box-shadow: 
+            0 20px 60px rgba(59, 130, 246, 0.15),
+            0 0 0 1px rgba(255, 255, 255, 0.8) inset,
+            0 0 40px rgba(96, 165, 250, 0.1);
+        position: relative;
+        z-index: 1;
+        animation: containerAppear 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes containerAppear {
+        from {
+            opacity: 0;
+            transform: translateY(100px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .glow-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #0095ff, transparent);
+        animation: scan 4s ease-in-out infinite;
+    }
+
+    @keyframes scan {
+        0%, 100% {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+        50% {
+            opacity: 1;
+            transform: translateX(100%);
+        }
+    }
+
+    .corner-decoration {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border: 2px solid rgba(0, 149, 255, 0.3);
+    }
+
+    .corner-decoration.top-left {
+        top: 20px;
+        left: 20px;
+        border-right: none;
+        border-bottom: none;
+        border-radius: 16px 0 0 0;
+        animation: cornerPulse 3s ease-in-out infinite;
+    }
+
+    .corner-decoration.bottom-right {
+        bottom: 20px;
+        right: 20px;
+        border-left: none;
+        border-top: none;
+        border-radius: 0 0 16px 0;
+        animation: cornerPulse 3s ease-in-out infinite 1.5s;
+    }
+
+    @keyframes cornerPulse {
+        0%, 100% {
+            opacity: 0.3;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+    }
+
+    .author-section .title {
+        text-align: center;
+        font-size: 4em;
+        font-weight: 800;
+        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+        letter-spacing: -1px;
+        animation: titleReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+        position: relative;
+    }
+
+    @keyframes titleReveal {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+            filter: blur(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
+    }
+
+    .author-section .title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 4px;
+        background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+        border-radius: 2px;
+        animation: lineGrow 1s ease-out 1.5s both;
+    }
+
+    @keyframes lineGrow {
+        from {
+            width: 0;
+            opacity: 0;
+        }
+        to {
+            width: 120px;
+            opacity: 1;
+        }
+    }
+
+    .subtitle {
+        text-align: center;
+        color: rgba(30, 58, 138, 0.6);
+        font-size: 1em;
+        margin-bottom: 60px;
+        letter-spacing: 4px;
+        font-weight: 400;
+        text-transform: uppercase;
+        animation: fadeSlideUp 1s ease-out 0.8s both;
+    }
+
+    @keyframes fadeSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .info-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(239, 246, 255, 0.9) 100%);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 24px;
+        padding: 60px;
+        position: relative;
+        overflow: hidden;
+        animation: cardReveal 1s ease-out 1.2s both;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .info-card:hover {
+        border-color: rgba(59, 130, 246, 0.5);
+        transform: translateY(-8px);
+        box-shadow: 0 30px 60px rgba(59, 130, 246, 0.2);
+    }
+
+    @keyframes cardReveal {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    .info-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(59, 130, 246, 0.15), 
+            transparent
+        );
+        transition: left 0.8s ease;
+    }
+
+    .info-card:hover::before {
+        left: 100%;
+    }
+
+    .info-item {
+        color: #1e293b;
+        margin-bottom: 45px;
+        position: relative;
+        z-index: 1;
+        animation: itemSlide 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        padding: 20px;
+        border-left: 3px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+        border-left-color: #3b82f6;
+        padding-left: 30px;
+    }
+
+    .info-item:nth-child(1) { animation-delay: 1.4s; }
+    .info-item:nth-child(2) { animation-delay: 1.6s; }
+    .info-item:nth-child(3) { animation-delay: 1.8s; }
+
+    @keyframes itemSlide {
+        from {
+            opacity: 0;
+            transform: translateX(-60px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .info-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.85em;
+        color: #3b82f6;
+        margin-bottom: 12px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        opacity: 0.9;
+    }
+
+    .value {
+        font-weight: 700;
+        font-size: 1.4em;
+        letter-spacing: 0.5px;
+        line-height: 1.6;
+        color: #1e293b;
+    }
+
+    .university-name {
+        font-size: 1.5em;
+        font-weight: 800;
+        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .author-name {
+        font-size: 1.6em;
+        font-weight: 800;
+        background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .footer-text {
+        text-align: center;
+        margin-top: 50px;
+        font-size: 0.9em;
+        color: rgba(30, 58, 138, 0.5);
+        letter-spacing: 2px;
+        animation: fadeSlideUp 1s ease-out 2.2s both;
+    }
+
+    .particles {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        background: #3b82f6;
+        border-radius: 50%;
+        opacity: 0;
+        animation: particle 8s ease-in-out infinite;
+    }
+
+    .particles:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+    .particles:nth-child(2) { top: 20%; right: 15%; animation-delay: 2s; }
+    .particles:nth-child(3) { bottom: 15%; left: 20%; animation-delay: 4s; }
+    .particles:nth-child(4) { bottom: 25%; right: 10%; animation-delay: 6s; }
+    .particles:nth-child(5) { top: 50%; left: 5%; animation-delay: 1s; }
+    .particles:nth-child(6) { top: 60%; right: 8%; animation-delay: 3s; }
+
+    @keyframes particle {
+        0%, 100% {
+            opacity: 0;
+            transform: translateY(0) scale(1);
+        }
+        50% {
+            opacity: 1;
+            transform: translateY(-30px) scale(1.5);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .author-container {
+            padding: 50px 30px;
+        }
+
+        .author-section .title {
+            font-size: 2.8em;
+        }
+
+        .info-item {
+            padding: 15px;
+        }
+
+        .info-card {
+            padding: 40px 30px;
+        }
+
+        .value {
+            font-size: 1.2em;
+        }
+    }
+</style>
  
 </body>
 </html>
