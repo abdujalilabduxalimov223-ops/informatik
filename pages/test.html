@@ -147,8 +147,14 @@ function editTest(index) {
 async function deleteTest(index) {
   if (!confirm("Test o‘chirilsinmi?")) return;
 
-  currentTests.splice(index, 1);
-  await saveAll();
+  const type = classSelect.value;
+
+  await fetch(`${API}/${type}/${index}`, {
+    method: "DELETE"
+  });
+
+  loadTests();
+}
 }
  //==== test====
 saveBtn.addEventListener("click", async () => {
