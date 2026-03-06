@@ -72,27 +72,13 @@
 
 <script>
 const API = "https://for-c8pq.onrender.com/api/tests";
+
 const classSelect = document.getElementById("classSelect");
 const testsList = document.getElementById("testsList");
 const testText = document.getElementById("testText");
 const saveBtn = document.getElementById("saveBtn");
 
 let currentTests = [];
-
-// ===== PARSER =====
-function parseTests(text) {
-  const blocks = text.split("++++").filter(b => b.trim());
-  return blocks.map(block => {
-    const lines = block.trim().split("\n").filter(Boolean);
-    return {
-      question: lines[0],
-      answers: lines.slice(1).map(l => ({
-        text: l.replace(/^(====|####)/, "").trim(),
-        correct: l.startsWith("####")
-      }))
-    };
-  });
-}
 
 // ===== SINFLAR O‘ZGARGANDA =====
 classSelect.addEventListener("change", loadTests);
@@ -111,7 +97,7 @@ async function loadTests() {
 function renderTests() {
   testsList.innerHTML = "";
 
-  if (currentTests.length === 0) {
+  if (!currentTests.length) {
     testsList.innerHTML = "<p>Hozircha testlar yo‘q</p>";
     return;
   }
@@ -135,11 +121,13 @@ function editTest(index) {
   const t = currentTests[index];
 
   let text = "++++ " + t.question + "\n";
+
   t.answers.forEach(a => {
     text += (a.correct ? "#### " : "==== ") + a.text + "\n";
   });
 
   testText.value = text;
+
   currentTests.splice(index, 1);
 }
 
@@ -155,8 +143,8 @@ async function deleteTest(index) {
 
   loadTests();
 }
-}
- //==== test====
+
+// ===== SAQLASH =====
 saveBtn.addEventListener("click", async () => {
   const classType = classSelect.value;
   const text = testText.value.trim();
@@ -171,9 +159,11 @@ saveBtn.addEventListener("click", async () => {
     return;
   }
 
-  await fetch("https://for-c8pq.onrender.com/api/tests", {
+  await fetch(API, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       classType,
       text
@@ -181,7 +171,9 @@ saveBtn.addEventListener("click", async () => {
   });
 
   alert("Test saqlandi ✅");
+
   testText.value = "";
+  loadTests();
 });
 
 </script>
