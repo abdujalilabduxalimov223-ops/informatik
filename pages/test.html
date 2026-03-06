@@ -87,8 +87,14 @@ async function loadTests() {
   const type = classSelect.value;
   if (!type) return;
 
-  const res = await fetch(`${API}/${type}`);
-  currentTests = await res.json();
+ const res = await fetch(`${API}/${type}`);
+
+if(!res.ok){
+  testsList.innerHTML = "<p>Server xatosi</p>";
+  return;
+}
+
+currentTests = await res.json();
 
   renderTests();
 }
@@ -109,7 +115,7 @@ function renderTests() {
     div.innerHTML = `
       <h3>${i + 1}. ${t.question}</h3>
       <button class="btn-secondary" onclick="editTest(${i})">✏️ Tahrirlash</button>
-      <button class="btn-primary" onclick="deleteTest(${i})">❌ O‘chirish</button>
+      <button class="btn-primary" onclick="deleteTest('${t._id}')">❌ O‘chirish</button>
     `;
 
     testsList.appendChild(div);
@@ -132,18 +138,21 @@ function editTest(index) {
 }
 
 // ===== O‘CHIRISH =====
-async function deleteTest(index) {
+async function deleteTest(id) {
+
   if (!confirm("Test o‘chirilsinmi?")) return;
 
-  const type = classSelect.value;
-
-  await fetch(`${API}/${type}/${index}`, {
+  const res = await fetch(`https://for-c8pq.onrender.com/api/test/${id}`, {
     method: "DELETE"
   });
 
-  loadTests();
-}
+  if(res.ok){
+    loadTests();
+  }else{
+    alert("O‘chirishda xato");
+  }
 
+}
 // ===== SAQLASH =====
 saveBtn.addEventListener("click", async () => {
   const classType = classSelect.value;
